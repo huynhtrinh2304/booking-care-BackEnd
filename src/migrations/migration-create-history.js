@@ -18,6 +18,9 @@ module.exports = {
             desription: {
                 type: Sequelize.TEXT
             },
+            files: {
+                type: Sequelize.TEXT
+            },
 
 
             createdAt: {
