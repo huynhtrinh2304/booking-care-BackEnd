@@ -1,0 +1,120 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <h1 class="text-center mt-4">Table User</h1>
+        <a href="/view-create-user" class="text-center mt-4">Create a new user</a>
+
+
+        <div class="mt-4 mr-4 ml-4">
+
+
+
+            <table class="table">
+
+
+                <thead class="thead-dark">
+
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Phone Number</th>
+                        <th scope="col">Gender</th>
+                        <th scope="col" class="text-center">Actions</th>
+
+
+
+
+
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <% for(var i=0; i < data.length; i++) { %>
+                        <tr>
+                            <th scope="row">
+                                <%= data[i].id %>
+                            </th>
+
+                            <td>
+                                <%= data[i].firstName %>
+                            </td>
+
+                            <td>
+                                <%= data[i].lastName %>
+                            </td>
+
+                            <td>
+                                <%= data[i].email %>
+                            </td>
+
+                            <td>
+                                <%= data[i].address %>
+                            </td>
+
+                            <td>
+                                <%= data[i].phoneNumber %>
+                            </td>
+
+                            <td>
+
+                                <% if(data[i].gender){ %>
+                                    Male
+                                    <% } else{ %>
+                                        Female
+                                        <% } %>
+
+                            </td>
+
+                            <td style="max-width: 110px;">
+                                <a href="/edit-user/?id=<%= data[i].id %>" class="btn btn-warning">Update</a>
+                                <a href="/delete-remove-user/?id=<%= data[i].id %>" class="btn btn-danger">Delete</a>
+                            </td>
+
+
+
+                        </tr>
+
+                        <% } %>
+
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+
+
+
+    </div>
+
+
+</body>
+
+</html>

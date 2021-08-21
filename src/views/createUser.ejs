@@ -1,0 +1,116 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trinh</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-3">
+                <h1>Create a new user</h1>
+                <a href="/get-users">View users</a>
+            </div>
+
+
+            <form class="mt-2 col-8" action="/post-create-user" method="POST">
+
+                <div class="form-row">
+
+
+                    <div class="form-group col-md-6">
+                        <label for="">Email</label>
+                        <input type="email" class="form-control" name="email" placeholder="Email" autocomplete="off"
+                            required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="">Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="Password" required>
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group col-md-6">
+                        <label for="">First name</label>
+                        <input type="text" class="form-control" name="firstname" placeholder="First name" required
+                            autocomplete="off">
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label for="">Last name</label>
+                        <input type="text" class="form-control" name="lastname" placeholder="Last name required"
+                            autocomplete="off">
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="inputAddress">Address</label>
+                    <textarea class="form-control" name="address" style="max-height: 150px; min-height: 150px;"
+                        cols="30" rows="10"></textarea>
+                </div>
+
+
+
+                <div class="form-row">
+
+                    <div class="form-group col-md-6">
+                        <label for="">Phone Number</label>
+                        <input type="text" class="form-control" name="phonenumber" placeholder="Phone Number required"
+                            autocomplete="off">
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label for="">Gender</label>
+                        <select class="form-control" name="gender">
+
+                            <option value="1">Male</option>
+                            <option value="0">Female</option>
+
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <label for="">Role</label>
+                        <select class="form-control" name="roleId">
+
+                            <option value="1">Admin</option>
+                            <option value="2">Doctor</option>
+                            <option value="3">Patient</option>
+
+
+                        </select>
+                    </div>
+
+
+                </div>
+
+
+
+                <button type="submit" class="btn btn-primary">Sign in</button>
+
+
+            </form>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

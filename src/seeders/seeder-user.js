@@ -9,9 +9,12 @@ module.exports = {
       firstName: 'trinh',
       lastName: 'huynh',
       address: 'quang nam',
+      phoneNumber: 'R1',
       gender: 1,
-      typeRole: 'ROLE',
-      keyRole: 'R1',
+      image: 'ROLE',
+      roleId: 'R1',
+      positionId: 'R1',
+
 
 
 
