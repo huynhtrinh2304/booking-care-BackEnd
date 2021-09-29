@@ -1,6 +1,8 @@
 import express from 'express';
 import crudController from '../controller/crudController';
 import userController from '../controller/userController';
+import doctorController from '../controller/doctorController';
+
 
 
 
@@ -33,6 +35,11 @@ let initWebRoutes = (app) => {
     router.delete('/api/delete-user', userController.handlDeleteUser);
 
     router.get('/api/allcode', userController.getAllCode);
+
+
+    // Doctor
+    router.get('/api/top-doctor-home', doctorController.getTopDoctorHome);
+
 
 
 
