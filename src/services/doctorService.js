@@ -70,17 +70,14 @@ let postInforDoctorService = (inforDoctor) => {
                     message: "Please choose a doctor"
                 })
             }
+            console.log(inforDoctor.description);
 
-
-            let res = await db.Markdown.create({
+            await db.Markdown.create({
+                description: 'sdasdasd',
                 contentHtml: inforDoctor.contentHtml,
                 contentMarkdown: inforDoctor.contentMarkdown,
                 doctorId: inforDoctor.selectedDoctors,
-                description: inforDoctor.description,
-
             })
-
-
 
             resolve({
                 errCode: 0,
@@ -95,9 +92,56 @@ let postInforDoctorService = (inforDoctor) => {
     })
 }
 
+
+
+let getDetailDoctorById = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!id) {
+                resolve({
+                    errCode: 1,
+                    message: 'Missing id'
+                })
+            } else {
+
+                let inforDoctor = await db.User.findOne({
+                    where: { id: id },
+                    attributes: {
+                        exclude: ['password', 'image'],
+                    },
+                    include: [
+                        {
+                            model: db.Markdown,
+                            attributes: ['description', 'contentHtml', 'contentMarkdown']
+                        },
+                        { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
+                    ],
+
+                    raw: true,
+                    nest: true,
+                })
+                resolve({
+                    error: 0,
+                    inforDoctor: inforDoctor
+                })
+            }
+
+
+
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+
+
+
+
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctorsService: getAllDoctorsService,
-    postInforDoctorService: postInforDoctorService
-
+    postInforDoctorService: postInforDoctorService,
+    getDetailDoctorById: getDetailDoctorById
 }
