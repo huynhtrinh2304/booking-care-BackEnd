@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import viewsEngine from "./config/viewEngine";
-import initWebRoutes from "./route/web";
+import initWebRoutes from "./router/web";
 import connectDB from "./config/connectDB"
 
 

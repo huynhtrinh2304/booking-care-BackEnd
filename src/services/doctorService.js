@@ -36,11 +36,68 @@ let getTopDoctorHome = (limitInput) => {
 }
 
 
+let getAllDoctorsService = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let doctors = await db.User.findAll({
+                where: {
+                    roleId: 'R2'
+                },
+                attributes: {
+                    exclude: ['password', 'image'],
+                },
+            })
+
+            resolve({
+                errCode: 0,
+                doctors: doctors
+            })
+
+
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+
+let postInforDoctorService = (inforDoctor) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inforDoctor.selectedDoctors) {
+                resolve({
+                    errCode: 1,
+                    message: "Please choose a doctor"
+                })
+            }
+
+
+            let res = await db.Markdown.create({
+                contentHtml: inforDoctor.contentHtml,
+                contentMarkdown: inforDoctor.contentMarkdown,
+                doctorId: inforDoctor.selectedDoctors,
+                description: inforDoctor.description,
+
+            })
 
 
 
+            resolve({
+                errCode: 0,
+                message: 'Save success'
+            })
+
+
+
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
+    getAllDoctorsService: getAllDoctorsService,
+    postInforDoctorService: postInforDoctorService
 
 }
