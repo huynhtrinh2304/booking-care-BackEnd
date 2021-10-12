@@ -70,10 +70,10 @@ let postInforDoctorService = (inforDoctor) => {
                     message: "Please choose a doctor"
                 })
             }
-            console.log(inforDoctor.description);
+
 
             await db.Markdown.create({
-                description: 'sdasdasd',
+                description: inforDoctor.description,
                 contentHtml: inforDoctor.contentHtml,
                 contentMarkdown: inforDoctor.contentMarkdown,
                 doctorId: inforDoctor.selectedDoctors,
@@ -107,7 +107,7 @@ let getDetailDoctorById = (id) => {
                 let inforDoctor = await db.User.findOne({
                     where: { id: id },
                     attributes: {
-                        exclude: ['password', 'image'],
+                        exclude: ['password',],
                     },
                     include: [
                         {
@@ -120,6 +120,12 @@ let getDetailDoctorById = (id) => {
                     raw: true,
                     nest: true,
                 })
+
+                if (inforDoctor && inforDoctor.image) {
+
+                    inforDoctor.image = new Buffer(inforDoctor.image, 'base64').toString('binary');
+                }
+
                 resolve({
                     error: 0,
                     inforDoctor: inforDoctor
