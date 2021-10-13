@@ -45,7 +45,7 @@ let postInforDoctor = async (req, res) => {
     try {
 
         let response = await doctorService.postInforDoctorService(req.body);
-        console.log(response);
+
         return res.status(200).json(response)
 
 
@@ -57,6 +57,8 @@ let postInforDoctor = async (req, res) => {
         })
     }
 }
+
+
 
 let getDetailDoctorById = async (req, res) => {
     try {
@@ -74,9 +76,29 @@ let getDetailDoctorById = async (req, res) => {
     }
 }
 
+let putEditMarkdownDoctor = async (req, res) => {
+    let data = req.body;
+    if (!data) {
+        return res.status(200).json({
+            error: 1,
+            message: 'Missing input parameter!'
+        });
+    }
+
+    let message = await doctorService.updateMarkdownDoctor(data)
+
+    return res.status(200).json(message);
+
+}
+
+
+
+
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctors: getAllDoctors,
     postInforDoctor: postInforDoctor,
-    getDetailDoctorById: getDetailDoctorById
+    getDetailDoctorById: getDetailDoctorById,
+    putEditMarkdownDoctor: putEditMarkdownDoctor
 }

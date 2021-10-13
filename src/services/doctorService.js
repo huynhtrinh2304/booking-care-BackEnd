@@ -64,7 +64,7 @@ let getAllDoctorsService = () => {
 let postInforDoctorService = (inforDoctor) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!inforDoctor.selectedDoctors) {
+            if (!inforDoctor.selectedDoctor) {
                 resolve({
                     errCode: 1,
                     message: "Please choose a doctor"
@@ -76,7 +76,7 @@ let postInforDoctorService = (inforDoctor) => {
                 description: inforDoctor.description,
                 contentHtml: inforDoctor.contentHtml,
                 contentMarkdown: inforDoctor.contentMarkdown,
-                doctorId: inforDoctor.selectedDoctors,
+                doctorId: inforDoctor.selectedDoctor,
             })
 
             resolve({
@@ -121,10 +121,16 @@ let getDetailDoctorById = (id) => {
                     nest: true,
                 })
 
+                if (!inforDoctor.Markdown.description && !inforDoctor.Markdown.contentHtml && !inforDoctor.Markdown.contentMarkdown) {
+                    inforDoctor.Markdown = 0;
+                }
+
                 if (inforDoctor && inforDoctor.image) {
 
                     inforDoctor.image = new Buffer(inforDoctor.image, 'base64').toString('binary');
                 }
+
+
 
                 resolve({
                     error: 0,
@@ -142,6 +148,50 @@ let getDetailDoctorById = (id) => {
 
 
 
+let updateMarkdownDoctor = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            console.log(data);
+            if (!data.selectedDoctor) {
+                resolve({
+                    errCode: 2,
+                    message: 'Not find a doctor',
+                })
+            }
+
+            let detail = await db.Markdown.findOne({
+                where: { doctorId: data.selectedDoctor },
+
+            })
+
+            if (!detail) {
+                resolve({
+                    errCode: 3,
+                    message: 'Doctor already exists in the system, Plz try another email other',
+                })
+            }
+
+
+
+            if (detail) {
+
+                detail.description = data.description;
+                detail.contentHtml = data.contentHtml;
+                detail.contentMarkdown = data.contentMarkdown;
+                await detail.save();
+
+                resolve({
+                    errCode: 0,
+                    message: 'Update success'
+                })
+            }
+
+
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
 
 
 
@@ -149,5 +199,6 @@ module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctorsService: getAllDoctorsService,
     postInforDoctorService: postInforDoctorService,
-    getDetailDoctorById: getDetailDoctorById
+    getDetailDoctorById: getDetailDoctorById,
+    updateMarkdownDoctor: updateMarkdownDoctor
 }
