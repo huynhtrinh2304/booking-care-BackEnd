@@ -1,4 +1,9 @@
 import db from '../models/index';
+import _ from 'lodash'
+require('dotenv').config();
+
+const MAX_NUMBER_SCHEDULES = process.env.MAX_NUMBER_SCHEDULES;
+
 
 let getTopDoctorHome = (limitInput) => {
     return new Promise(async (resolve, reject) => {
@@ -151,7 +156,7 @@ let getDetailDoctorById = (id) => {
 let updateMarkdownDoctor = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log(data);
+
             if (!data.selectedDoctor) {
                 resolve({
                     errCode: 2,
@@ -194,11 +199,91 @@ let updateMarkdownDoctor = (data) => {
 }
 
 
+let bulkCreateScheduleService = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+
+            if (!data.arrSchedule || !data.doctorId || !data.date) {
+                resolve({
+                    errCode: 1,
+                    message: 'Missing input parameter!'
+                })
+
+
+            } else {
+
+
+                let schedule = data.arrSchedule;
+                if (schedule && schedule.length > 0) {
+                    schedule.map(item => {
+                        item.maxNumber = MAX_NUMBER_SCHEDULES;
+                    })
+                }
+
+                //Get all scheduled where doctorId and date
+                let resSchedule = await db.Schedule.findAll(
+                    {
+                        where: {
+                            doctorId: data.doctorId,
+                            date: data.date,
+
+                        },
+                        attributes: ['doctorId', 'timeType', 'maxNumber', 'date'],
+                        raw: true,
+                    }
+                )
+
+
+                // Convert date
+                if (resSchedule && resSchedule.length > 0) {
+                    resSchedule.map(time => {
+                        time.date = new Date(time.date).getTime();
+                    })
+                }
+
+
+                // compare 2 array resSchedule(database) and resSchedule to add schedule for doctor
+                let compare = _.differenceWith(schedule, resSchedule, (a, b) => {
+                    return a.timeType === b.timeType && a.date === b.date
+                })
+
+
+                // Crete schedule for doctor
+                if (compare && compare.length > 0) {
+                    await db.Schedule.bulkCreate(compare);
+                }
+
+
+
+
+                resolve({
+                    errCode: 0,
+                    message: 'ok'
+                });
+
+            }
+
+
+
+
+
+
+
+
+
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+
 
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctorsService: getAllDoctorsService,
     postInforDoctorService: postInforDoctorService,
     getDetailDoctorById: getDetailDoctorById,
-    updateMarkdownDoctor: updateMarkdownDoctor
+    updateMarkdownDoctor: updateMarkdownDoctor,
+    bulkCreateScheduleService: bulkCreateScheduleService
 }

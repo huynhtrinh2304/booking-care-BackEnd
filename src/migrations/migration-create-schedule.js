@@ -12,7 +12,7 @@ module.exports = {
             currentNumber: {
                 type: Sequelize.INTEGER
             },
-            currentNumber: {
+            maxNumber: {
                 type: Sequelize.INTEGER,
             },
             date: {

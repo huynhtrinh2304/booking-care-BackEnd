@@ -24,9 +24,10 @@ let getTopDoctorHome = async (req, res) => {
 let getAllDoctors = async (req, res) => {
 
     try {
-
         let doctors = await doctorService.getAllDoctorsService();
-        return res.status(200).json(doctors)
+        return res.status(200).json(doctors);
+
+
 
     } catch (error) {
         console.log(error);
@@ -77,21 +78,47 @@ let getDetailDoctorById = async (req, res) => {
 }
 
 let putEditMarkdownDoctor = async (req, res) => {
-    let data = req.body;
-    if (!data) {
+    try {
+        let data = req.body;
+        if (!data) {
+            return res.status(200).json({
+                error: 1,
+                message: 'Missing input parameter!'
+            });
+        }
+
+        let message = await doctorService.updateMarkdownDoctor(data)
+
+        return res.status(200).json(message);
+    } catch (error) {
+        console.log(error);
         return res.status(200).json({
-            error: 1,
-            message: 'Missing input parameter!'
+            errCode: -1,
+            message: 'Error from server'
         });
     }
-
-    let message = await doctorService.updateMarkdownDoctor(data)
-
-    return res.status(200).json(message);
 
 }
 
 
+
+let bulkCreateSchedule = async (req, res) => {
+    try {
+
+        let message = await doctorService.bulkCreateScheduleService(req.body);
+        return res.status(200).json(message)
+
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from server'
+        });
+    }
+
+}
 
 
 
@@ -100,5 +127,6 @@ module.exports = {
     getAllDoctors: getAllDoctors,
     postInforDoctor: postInforDoctor,
     getDetailDoctorById: getDetailDoctorById,
-    putEditMarkdownDoctor: putEditMarkdownDoctor
+    putEditMarkdownDoctor: putEditMarkdownDoctor,
+    bulkCreateSchedule: bulkCreateSchedule
 }
