@@ -221,6 +221,7 @@ let bulkCreateScheduleService = (data) => {
                 }
 
                 //Get all scheduled where doctorId and date
+
                 let resSchedule = await db.Schedule.findAll(
                     {
                         where: {
@@ -235,11 +236,11 @@ let bulkCreateScheduleService = (data) => {
 
 
                 // Convert date
-                if (resSchedule && resSchedule.length > 0) {
-                    resSchedule.map(time => {
-                        time.date = new Date(time.date).getTime();
-                    })
-                }
+                // if (resSchedule && resSchedule.length > 0) {
+                //     resSchedule.map(time => {
+                //         time.date = new Date(time.date).getTime();
+                //     })
+                // }
 
 
                 // compare 2 array resSchedule(database) and resSchedule to add schedule for doctor
@@ -247,15 +248,10 @@ let bulkCreateScheduleService = (data) => {
                     return a.timeType === b.timeType && a.date === b.date
                 })
 
-
                 // Crete schedule for doctor
                 if (compare && compare.length > 0) {
                     await db.Schedule.bulkCreate(compare);
                 }
-
-
-
-
                 resolve({
                     errCode: 0,
                     message: 'ok'
@@ -263,8 +259,37 @@ let bulkCreateScheduleService = (data) => {
 
             }
 
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+let getScheduleDoctorByDateService = (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
 
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    message: 'Missing input parameter!'
+                })
+            } else {
+                let data = await db.Schedule.findAll({
+                    where: {
+                        doctorId: doctorId,
+                        date: date
+                    }
+                })
 
+                if (!data) {
+                    data = [];
+                }
+
+                resolve({
+                    errCode: 0,
+                    data: data
+                })
+            }
 
 
 
@@ -285,5 +310,6 @@ module.exports = {
     postInforDoctorService: postInforDoctorService,
     getDetailDoctorById: getDetailDoctorById,
     updateMarkdownDoctor: updateMarkdownDoctor,
-    bulkCreateScheduleService: bulkCreateScheduleService
+    bulkCreateScheduleService: bulkCreateScheduleService,
+    getScheduleDoctorByDateService: getScheduleDoctorByDateService
 }
