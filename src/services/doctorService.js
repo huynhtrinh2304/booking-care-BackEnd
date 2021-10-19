@@ -234,15 +234,6 @@ let bulkCreateScheduleService = (data) => {
                     }
                 )
 
-
-                // Convert date
-                // if (resSchedule && resSchedule.length > 0) {
-                //     resSchedule.map(time => {
-                //         time.date = new Date(time.date).getTime();
-                //     })
-                // }
-
-
                 // compare 2 array resSchedule(database) and resSchedule to add schedule for doctor
                 let compare = _.differenceWith(schedule, resSchedule, (a, b) => {
                     return a.timeType === b.timeType && a.date === b.date
@@ -278,7 +269,12 @@ let getScheduleDoctorByDateService = (doctorId, date) => {
                     where: {
                         doctorId: doctorId,
                         date: date
-                    }
+                    },
+                    include: [
+                        { model: db.Allcode, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] }
+
+                    ],
+
                 })
 
                 if (!data) {
