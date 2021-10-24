@@ -77,11 +77,25 @@ let postInforDoctorService = (inforDoctor) => {
             }
 
 
+
+
+
             await db.Markdown.create({
                 description: inforDoctor.description,
                 contentHtml: inforDoctor.contentHtml,
                 contentMarkdown: inforDoctor.contentMarkdown,
                 doctorId: inforDoctor.selectedDoctor,
+
+            })
+
+            await db.Doctor_Infors.create({
+                doctorId: inforDoctor.selectedDoctor,
+                priceId: inforDoctor.price,
+                provinceId: inforDoctor.province,
+                paymentId: inforDoctor.payment,
+                addressClinic: inforDoctor.addressClinic,
+                nameClinic: inforDoctor.nameClinic,
+                note: inforDoctor.note,
             })
 
             resolve({
@@ -164,9 +178,22 @@ let updateMarkdownDoctor = (data) => {
                 })
             }
 
+            if (!data.addressClinic && !data.nameClinic &&
+                !data.note && !data.payment && !data.price &&
+                !data.province
+            ) {
+                resolve({
+                    errCode: 2,
+                    message: 'Missing input parameters',
+                })
+            }
+
             let detail = await db.Markdown.findOne({
                 where: { doctorId: data.selectedDoctor },
+            })
 
+            let doctorInfor = await db.Doctor_Infors.findOne({
+                where: { doctorId: data.selectedDoctor },
             })
 
             if (!detail) {
@@ -178,12 +205,28 @@ let updateMarkdownDoctor = (data) => {
 
 
 
-            if (detail) {
+            if (detail && doctorInfor) {
 
                 detail.description = data.description;
                 detail.contentHtml = data.contentHtml;
                 detail.contentMarkdown = data.contentMarkdown;
+
+                doctorInfor.paymentId = data.payment;
+                doctorInfor.provinceId = data.province;
+                doctorInfor.priceId = data.price;
+                doctorInfor.addressClinic = data.addressClinic;
+                doctorInfor.note = data.note;
+                doctorInfor.nameClinic = data.nameClinic;
+
+
+
                 await detail.save();
+                await doctorInfor.save();
+
+
+
+
+
 
                 resolve({
                     errCode: 0,
@@ -255,6 +298,8 @@ let bulkCreateScheduleService = (data) => {
         }
     })
 }
+
+
 let getScheduleDoctorByDateService = (doctorId, date) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -298,6 +343,70 @@ let getScheduleDoctorByDateService = (doctorId, date) => {
     })
 }
 
+let getInforDoctorByIdService = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!id) {
+                resolve({
+                    errCode: 1,
+                    message: 'Missing id'
+                })
+            } else {
+
+                let inforDoctor = {
+
+                }
+
+                let dataMarkdown = await db.Markdown.findOne({
+                    where: { doctorId: id },
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'id'],
+                    },
+                    raw: true,
+                })
+
+                let doctorInfor = await db.Doctor_Infors.findOne({
+                    where: { doctorId: id },
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'id'],
+                    },
+                    include: [
+                        { model: db.Allcode, as: 'priceData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'paymentData', attributes: ['valueEn', 'valueVi'] },
+                        { model: db.Allcode, as: 'provinceData', attributes: ['valueEn', 'valueVi'] },
+
+                    ],
+                    raw: true,
+                    nest: true,
+                })
+
+                if (!dataMarkdown && !doctorInfor) {
+                    inforDoctor = 0;
+                } else {
+
+                    inforDoctor.dataMarkdown = dataMarkdown;
+
+
+                    inforDoctor.doctorInfor = doctorInfor;
+
+                }
+
+
+
+                resolve({
+                    error: 0,
+                    inforDoctor: inforDoctor
+                })
+            }
+
+
+
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
 
 
 module.exports = {
@@ -307,5 +416,6 @@ module.exports = {
     getDetailDoctorById: getDetailDoctorById,
     updateMarkdownDoctor: updateMarkdownDoctor,
     bulkCreateScheduleService: bulkCreateScheduleService,
-    getScheduleDoctorByDateService: getScheduleDoctorByDateService
+    getScheduleDoctorByDateService: getScheduleDoctorByDateService,
+    getInforDoctorByIdService: getInforDoctorByIdService
 }

@@ -3,13 +3,16 @@ const {
     Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    class Doctor_Infor extends Model {
+    class Doctor_Infors extends Model {
 
         static associate(models) {
-            // define association here
+            Doctor_Infors.belongsTo(models.Allcode, { foreignKey: 'priceId', targetKey: 'keyMap', as: 'priceData' }),
+                Doctor_Infors.belongsTo(models.Allcode, { foreignKey: 'paymentId', targetKey: 'keyMap', as: 'paymentData' }),
+                Doctor_Infors.belongsTo(models.Allcode, { foreignKey: 'provinceId', targetKey: 'keyMap', as: 'provinceData' })
+
         }
     };
-    Doctor_Infor.init({
+    Doctor_Infors.init({
 
         doctorId: DataTypes.INTEGER,
         priceId: DataTypes.STRING,
@@ -26,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
 
     }, {
         sequelize,
-        modelName: 'Doctor_Infor',
+        modelName: 'Doctor_Infors',
     });
-    return Doctor_Infor;
+    return Doctor_Infors;
 };
