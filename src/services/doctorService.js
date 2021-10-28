@@ -385,12 +385,73 @@ let getInforDoctorByIdService = (id) => {
                 } else {
 
                     inforDoctor.dataMarkdown = dataMarkdown;
-
-
                     inforDoctor.doctorInfor = doctorInfor;
 
                 }
 
+
+
+                resolve({
+                    error: 0,
+                    inforDoctor: inforDoctor
+                })
+            }
+
+
+
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+let getProfileDoctorByIdService = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!id) {
+                resolve({
+                    errCode: 1,
+                    message: 'Missing id'
+                })
+            } else {
+
+                let inforDoctor = await db.User.findOne({
+                    where: { id: id },
+                    attributes: {
+                        exclude: ['password',],
+                    },
+
+                    include: [
+                        {
+                            model: db.Markdown,
+                            attributes: ['description', 'contentHtml', 'contentMarkdown']
+                        },
+                        { model: db.Allcode, as: 'positionData', attributes: ['valueEn', 'valueVi'] },
+                        {
+                            model: db.Doctor_Infors,
+                            attributes: {
+                                exclude: ['id', 'doctorid']
+                            },
+                            include: [
+
+                                { model: db.Allcode, as: 'priceData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'paymentData', attributes: ['valueEn', 'valueVi'] },
+                                { model: db.Allcode, as: 'provinceData', attributes: ['valueEn', 'valueVi'] },
+                            ],
+                        }
+                    ],
+                    raw: false,
+                    nest: true,
+                })
+
+                if (inforDoctor && inforDoctor.image) {
+                    inforDoctor.image = new Buffer(inforDoctor.image, 'base64').toString('binary');
+                }
+
+
+                if (!inforDoctor) {
+                    inforDoctor = {}
+                }
 
 
                 resolve({
@@ -417,5 +478,6 @@ module.exports = {
     updateMarkdownDoctor: updateMarkdownDoctor,
     bulkCreateScheduleService: bulkCreateScheduleService,
     getScheduleDoctorByDateService: getScheduleDoctorByDateService,
-    getInforDoctorByIdService: getInforDoctorByIdService
+    getInforDoctorByIdService: getInforDoctorByIdService,
+    getProfileDoctorByIdService: getProfileDoctorByIdService
 }
