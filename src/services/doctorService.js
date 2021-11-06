@@ -145,7 +145,6 @@ let getDetailDoctorById = (id) => {
                 }
 
                 if (inforDoctor && inforDoctor.image) {
-
                     inforDoctor.image = new Buffer(inforDoctor.image, 'base64').toString('binary');
                 }
 

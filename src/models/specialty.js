@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
 
         name: DataTypes.STRING,
         image: DataTypes.STRING,
-        desriptionHtml: DataTypes.TEXT('long'),
-        desriptionMarkdown: DataTypes.TEXT('long'),
+        descriptionHtml: DataTypes.TEXT('long'),
+        descriptionMarkdown: DataTypes.TEXT('long'),
 
     }, {
         sequelize,

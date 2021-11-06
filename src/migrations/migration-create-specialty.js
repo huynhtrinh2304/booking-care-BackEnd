@@ -14,10 +14,10 @@ module.exports = {
             image: {
                 type: Sequelize.BLOB('long'),
             },
-            desriptionHtml: {
+            descriptionHtml: {
                 type: Sequelize.TEXT('long'),
             },
-            desriptionMarkdown: {
+            descriptionMarkdown: {
                 type: Sequelize.TEXT('long'),
             },
 
