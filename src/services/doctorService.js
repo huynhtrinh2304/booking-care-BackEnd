@@ -93,6 +93,7 @@ let postInforDoctorService = (inforDoctor) => {
                 priceId: inforDoctor.price,
                 provinceId: inforDoctor.province,
                 paymentId: inforDoctor.payment,
+                specialtyId: inforDoctor.specialty,
                 addressClinic: inforDoctor.addressClinic,
                 nameClinic: inforDoctor.nameClinic,
                 note: inforDoctor.note,
@@ -213,9 +214,11 @@ let updateMarkdownDoctor = (data) => {
                 doctorInfor.paymentId = data.payment;
                 doctorInfor.provinceId = data.province;
                 doctorInfor.priceId = data.price;
+                doctorInfor.specialtyId = data.specialty;
                 doctorInfor.addressClinic = data.addressClinic;
                 doctorInfor.note = data.note;
                 doctorInfor.nameClinic = data.nameClinic;
+
 
 
 
@@ -373,7 +376,7 @@ let getInforDoctorByIdService = (id) => {
                         { model: db.Allcode, as: 'priceData', attributes: ['valueEn', 'valueVi'] },
                         { model: db.Allcode, as: 'paymentData', attributes: ['valueEn', 'valueVi'] },
                         { model: db.Allcode, as: 'provinceData', attributes: ['valueEn', 'valueVi'] },
-
+                        { model: db.Specialty, as: 'specialty', attributes: ['name', 'id'] },
                     ],
                     raw: true,
                     nest: true,

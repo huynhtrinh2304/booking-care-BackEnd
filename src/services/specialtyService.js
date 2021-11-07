@@ -51,9 +51,35 @@ let getAllSpecialtyService = async () => {
     }
 }
 
+let getAllNameSpecialtyService = async () => {
+    try {
+        let data = await db.Specialty.findAll({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'image', 'descriptionHtml', 'descriptionMarkdown']
+
+            },
+            raw: true,
+        });
+        if (data) {
+            return {
+                errCode: 0,
+                data: data,
+            };
+        } else {
+            return {
+                errCode: 1,
+                message: 'Not find specialty service'
+            };
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 
 module.exports = {
     postCreateNewSpecialtyService: postCreateNewSpecialtyService,
-    getAllSpecialtyService: getAllSpecialtyService
+    getAllSpecialtyService: getAllSpecialtyService,
+    getAllNameSpecialtyService: getAllNameSpecialtyService
 }
