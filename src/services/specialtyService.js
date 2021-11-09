@@ -33,6 +33,9 @@ let getAllSpecialtyService = async () => {
             attributes: {
                 exclude: ['createdAt', 'updatedAt',]
             },
+            // include: [
+            //     { model: db.Specialty, as: 'specialty', attributes: ['descriptionHtml'] },
+            // ],
             raw: true,
         });
         if (data) {
@@ -76,10 +79,47 @@ let getAllNameSpecialtyService = async () => {
     }
 }
 
+let getAllDoctorBySpecialtyIdService = async (id) => {
+    try {
+        let data = await db.Doctor_Infors.findAll({
+            where: { specialtyId: id },
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
+            raw: true,
+        });
+
+        let specialty = await db.Specialty.findOne({
+            where: { id: id },
+            attributes: {
+                exclude: ['createdAt', 'updatedAt',]
+            },
+            raw: true,
+        });
+
+        if (data) {
+            return {
+                errCode: 0,
+                specialty: specialty,
+                data: data,
+
+            };
+        } else {
+            return {
+                errCode: 1,
+                message: 'Not find specialty service'
+            };
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 
 module.exports = {
     postCreateNewSpecialtyService: postCreateNewSpecialtyService,
     getAllSpecialtyService: getAllSpecialtyService,
-    getAllNameSpecialtyService: getAllNameSpecialtyService
+    getAllNameSpecialtyService: getAllNameSpecialtyService,
+    getAllDoctorBySpecialtyIdService: getAllDoctorBySpecialtyIdService
 }

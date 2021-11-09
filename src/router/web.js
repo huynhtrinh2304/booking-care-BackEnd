@@ -61,6 +61,8 @@ let initWebRoutes = (app) => {
     router.post('/api/create-new-specialty', specialtyController.postCreateNewSpecialty);
     router.get('/api/get-all-specialty', specialtyController.getAllSpecialty);
     router.get('/api/get-all-name-specialty', specialtyController.getAllNameSpecialty);
+    router.get('/api/get-all-doctor-by-specialty-id', specialtyController.getAllDoctorBySpecialtyId);
+
 
 
 
