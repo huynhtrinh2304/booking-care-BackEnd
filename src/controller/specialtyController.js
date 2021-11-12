@@ -3,6 +3,7 @@ import specialtyService from '../services/specialtyService';
 let postCreateNewSpecialty = async (req, res, next) => {
     try {
         let mess = await specialtyService.postCreateNewSpecialtyService(req.body);
+
         return res.status(200).json(mess);
 
     } catch (error) {
@@ -17,8 +18,13 @@ let postCreateNewSpecialty = async (req, res, next) => {
 
 let getAllSpecialty = async (req, res) => {
     try {
-        let data = await specialtyService.getAllSpecialtyService();
-        return res.status(200).json(data);
+        let resData = await specialtyService.getAllSpecialtyService();
+        if (resData && resData.data) {
+            resData.data.map((value) => {
+                value.image = new Buffer(value.image, 'base64').toString('binary');
+            })
+        }
+        return res.status(200).json(resData);
 
     } catch (error) {
         console.log(error);
