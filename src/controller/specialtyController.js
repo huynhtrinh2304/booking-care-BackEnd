@@ -1,4 +1,4 @@
-import specialtyService from '../services/specialtyService'
+import specialtyService from '../services/specialtyService';
 
 let postCreateNewSpecialty = async (req, res, next) => {
     try {
