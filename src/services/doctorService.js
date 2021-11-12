@@ -32,9 +32,8 @@ let getTopDoctorHome = (limitInput) => {
                 errCode: 0,
                 users: users
             })
-
-
         } catch (e) {
+            console.log(e);
             reject(e)
         }
     })
