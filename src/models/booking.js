@@ -6,7 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     class Booking extends Model {
 
         static associate(models) {
-            // define association here
+            Booking.belongsTo(models.Allcode, { foreignKey: 'timeType', targetKey: 'keyMap', as: 'time' })
+
         }
     };
     Booking.init({
@@ -16,7 +17,12 @@ module.exports = (sequelize, DataTypes) => {
         patientId: DataTypes.INTEGER,
         date: DataTypes.BIGINT,
         timeType: DataTypes.STRING,
-        token: DataTypes.STRING
+        token: DataTypes.STRING,
+        fullName: DataTypes.STRING,
+        address: DataTypes.STRING,
+        phoneNumber: DataTypes.STRING,
+        gender: DataTypes.STRING,
+        reason: DataTypes.STRING,
 
 
     }, {

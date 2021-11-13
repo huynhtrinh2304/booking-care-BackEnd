@@ -11,24 +11,6 @@ module.exports = {
             email: {
                 type: Sequelize.STRING
             },
-            fullName: {
-                type: Sequelize.STRING
-            },
-            address: {
-                type: Sequelize.STRING
-            },
-            phoneNumber: {
-                type: Sequelize.STRING
-            },
-            gender: {
-                type: Sequelize.STRING
-            },
-            birthdayPatient: {
-                type: Sequelize.STRING
-            },
-            reason: {
-                type: Sequelize.STRING
-            },
 
             createdAt: {
                 allowNull: false,

@@ -7,20 +7,11 @@ module.exports = (sequelize, DataTypes) => {
 
         static associate(models) {
 
-
         }
     };
     Patient.init({
 
         email: DataTypes.STRING,
-        fullName: DataTypes.STRING,
-        address: DataTypes.STRING,
-        phoneNumber: DataTypes.STRING,
-        gender: DataTypes.STRING,
-        birthdayPatient: DataTypes.STRING,
-        reason: DataTypes.STRING,
-
-
 
 
     }, {

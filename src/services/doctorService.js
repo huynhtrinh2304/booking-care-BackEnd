@@ -1,6 +1,7 @@
 import db from '../models/index';
 import _ from 'lodash'
 require('dotenv').config();
+import { status } from '../utils/constant'
 
 const MAX_NUMBER_SCHEDULES = process.env.MAX_NUMBER_SCHEDULES;
 
@@ -473,6 +474,35 @@ let getProfileDoctorByIdService = (id) => {
     })
 }
 
+let getListPaitentFortDoctorService = async (id, time) => {
+    if (!id || !time) {
+        return ({
+            errCode: 1,
+            message: 'Missing input parameter!'
+        })
+    } else {
+        let data = await db.Booking.findAll({
+            where: { doctorId: id, date: time, statusId: status.CONFIRMED },
+            attributes: {
+                exclude: ['token', 'createdAt', 'updatedAt']
+            },
+            include: [
+                {
+                    model: db.Allcode, as: 'time',
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
+                },
+            ]
+        })
+
+        return ({
+            errCode: 0,
+            data: data
+        })
+    }
+}
+
 
 
 module.exports = {
@@ -484,5 +514,6 @@ module.exports = {
     bulkCreateScheduleService: bulkCreateScheduleService,
     getScheduleDoctorByDateService: getScheduleDoctorByDateService,
     getInforDoctorByIdService: getInforDoctorByIdService,
-    getProfileDoctorByIdService: getProfileDoctorByIdService
+    getProfileDoctorByIdService: getProfileDoctorByIdService,
+    getListPaitentFortDoctorService: getListPaitentFortDoctorService
 }

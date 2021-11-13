@@ -20,7 +20,7 @@ let postBookAppointmentService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             if (!data.email || !data.doctorId || !data.timeType || !data.date
-                || !data.fullName || !data.birthday || !data.gender
+                || !data.fullName || !data.gender
                 || !data.address || !data.reason || !data.phoneNumber
             ) {
                 resolve({
@@ -65,12 +65,7 @@ let postBookAppointmentService = (data) => {
                     where: { email: data.email },
                     defaults: {
                         email: data.email,
-                        fullName: data.fullName,
-                        phoneNumber: data.phoneNumber,
-                        address: data.address,
-                        reason: data.reason,
-                        gender: data.gender,
-                        birthdayPatient: data.birthday,
+
                     },
                     raw: true,
                 });
@@ -88,7 +83,13 @@ let postBookAppointmentService = (data) => {
                             patientId: patient[0].id,
                             timeType: data.timeType,
                             date: data.date,
-                            token: dataUrl.token
+                            token: dataUrl.token,
+                            fullName: data.fullName,
+                            phoneNumber: data.phoneNumber,
+                            address: data.address,
+                            reason: data.reason,
+                            gender: data.gender,
+
                         },
                         raw: true,
                     });
