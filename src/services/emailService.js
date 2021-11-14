@@ -63,8 +63,42 @@ let sendSimpleEmail = async (data) => {
 
 }
 
+let sendEmailFromDoctor = async (data) => {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: process.env.EMAIL_APP, // generated ethereal user
+            pass: process.env.EMAIL_APP_PASSWORD, // generated ethereal password
+        },
+    });
+    let subject = 'Hoàn tất khám bệnh';
+    let contentHtml = `
+
+    <h1>Cảm ơn ${data.fullName} đã sử dụng dịch vụ của chúng tôi</h1> 
+    <h3>Ảnh hóa đơn từ bác sĩ</h3>
+
+    `
+
+
+    await transporter.sendMail({
+        from: `"Center BookingCare" <trinhhuynh2304@gmail.com>`, // sender address
+        to: data.emailPatient, // E-mail recipients
+        subject: subject,
+        html: contentHtml,
+        attachments: [{
+            filename: 'image.png',
+            encoding: 'base64',
+            content: data.path.split("base64,")[1],
+        }]
+    });
+
+}
+
 
 
 module.exports = {
-    sendSimpleEmail: sendSimpleEmail
+    sendSimpleEmail: sendSimpleEmail,
+    sendEmailFromDoctor: sendEmailFromDoctor
 }

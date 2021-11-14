@@ -1,8 +1,8 @@
 import db from '../models/index';
 import _ from 'lodash'
 require('dotenv').config();
-import { status } from '../utils/constant'
-
+import { status } from '../utils/constant';
+import emailService from './emailService';
 const MAX_NUMBER_SCHEDULES = process.env.MAX_NUMBER_SCHEDULES;
 
 
@@ -474,36 +474,85 @@ let getProfileDoctorByIdService = (id) => {
     })
 }
 
-let getListPaitentFortDoctorService = async (id, time) => {
-    if (!id || !time) {
-        return ({
-            errCode: 1,
-            message: 'Missing input parameter!'
-        })
-    } else {
-        let data = await db.Booking.findAll({
-            where: { doctorId: id, date: time, statusId: status.CONFIRMED },
-            attributes: {
-                exclude: ['token', 'createdAt', 'updatedAt']
-            },
-            include: [
-                {
-                    model: db.Allcode, as: 'time',
-                    attributes: {
-                        exclude: ['createdAt', 'updatedAt']
-                    },
+let getListPatientForDoctorService = async (id, time) => {
+    try {
+        if (!id || !time) {
+            return ({
+                errCode: 1,
+                message: 'Missing input parameter!'
+            })
+        } else {
+            let data = await db.Booking.findAll({
+                where: { doctorId: id, date: time, statusId: status.CONFIRMED },
+                attributes: {
+                    exclude: ['token', 'createdAt', 'updatedAt']
                 },
-            ]
-        })
+                include: [
+                    {
+                        model: db.Patient, as: 'patient',
+                        attributes: {
+                            exclude: ['createdAt', 'updatedAt']
+                        },
+                    },
+                    {
+                        model: db.Allcode, as: 'time',
+                        attributes: {
+                            exclude: ['createdAt', 'updatedAt']
+                        },
+                    },
+                ]
+            })
 
-        return ({
-            errCode: 0,
-            data: data
-        })
+            return ({
+                errCode: 0,
+                data: data
+            })
+        }
+    } catch (error) {
+        console.log(error);
     }
 }
 
+let sendMailForPatientService = async (data) => {
 
+
+    try {
+        if (!data.emailPatient || !data.doctorId || !data.patientId) {
+            return {
+                errCode: 1,
+                message: 'Missing input parameter!'
+            }
+        } else {
+            let response = await db.Booking.findOne({
+                where: {
+                    doctorId: data.doctorId,
+                    patientId: data.patientId,
+                    statusId: data.statusId,
+                    date: data.date,
+                    timeType: data.timeType,
+                }
+
+
+            })
+            if (!response) {
+                return {
+                    errCode: 2,
+                    message: 'Not find booking'
+                }
+            } else {
+                await emailService.sendEmailFromDoctor(data)
+                response.statusId = status.DONE;
+                response.save();
+            }
+            return {
+                errCode: 0,
+                message: 'Done patient'
+            }
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
 
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
@@ -515,5 +564,6 @@ module.exports = {
     getScheduleDoctorByDateService: getScheduleDoctorByDateService,
     getInforDoctorByIdService: getInforDoctorByIdService,
     getProfileDoctorByIdService: getProfileDoctorByIdService,
-    getListPaitentFortDoctorService: getListPaitentFortDoctorService
+    getListPatientForDoctorService: getListPatientForDoctorService,
+    sendMailForPatientService: sendMailForPatientService
 }

@@ -169,9 +169,23 @@ let getProfileDoctorById = async (req, res) => {
     }
 }
 
-let getListPaitentFortDoctor = async (req, res) => {
+let getListPatientForDoctor = async (req, res) => {
     try {
-        let infor = await doctorService.getListPaitentFortDoctorService(req.query.id, req.query.time);
+        let infor = await doctorService.getListPatientForDoctorService(req.query.id, req.query.time);
+        return res.status(200).json(infor)
+
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({
+            errCode: -1,
+            message: 'Error from server'
+        })
+    }
+}
+
+let sendMailForPatient = async (req, res) => {
+    try {
+        let infor = await doctorService.sendMailForPatientService(req.body);
         return res.status(200).json(infor)
 
     } catch (error) {
@@ -185,8 +199,6 @@ let getListPaitentFortDoctor = async (req, res) => {
 
 
 
-
-
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctors: getAllDoctors,
@@ -197,5 +209,6 @@ module.exports = {
     getScheduleDoctorByDate: getScheduleDoctorByDate,
     getInforDoctorById: getInforDoctorById,
     getProfileDoctorById: getProfileDoctorById,
-    getListPaitentFortDoctor: getListPaitentFortDoctor
+    getListPatientForDoctor: getListPatientForDoctor,
+    sendMailForPatient: sendMailForPatient
 }
