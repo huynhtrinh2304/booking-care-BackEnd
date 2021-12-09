@@ -4,7 +4,7 @@ require('dotenv').config();
 import { status } from '../utils/constant';
 import emailService from './emailService';
 const MAX_NUMBER_SCHEDULES = process.env.MAX_NUMBER_SCHEDULES;
-
+const { Op } = require("sequelize");
 
 let getTopDoctorHome = (limitInput) => {
     return new Promise(async (resolve, reject) => {
@@ -250,7 +250,7 @@ let bulkCreateScheduleService = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
 
-            if (!data.arrSchedule || !data.doctorId || !data.date) {
+            if (!data.arrSchedule || !data.doctorId) {
                 resolve({
                     errCode: 1,
                     message: 'Missing input parameter!'
@@ -258,7 +258,6 @@ let bulkCreateScheduleService = (data) => {
 
 
             } else {
-
 
                 let schedule = data.arrSchedule;
                 if (schedule && schedule.length > 0) {
@@ -273,8 +272,6 @@ let bulkCreateScheduleService = (data) => {
                     {
                         where: {
                             doctorId: data.doctorId,
-                            date: data.date,
-
                         },
                         attributes: ['doctorId', 'timeType', 'maxNumber', 'date'],
                         raw: true,
@@ -304,7 +301,7 @@ let bulkCreateScheduleService = (data) => {
 }
 
 
-let getScheduleDoctorByDateService = (doctorId, date) => {
+let getScheduleDoctorByDateService = (doctorId, date, timeFuture) => {
     return new Promise(async (resolve, reject) => {
         try {
 
@@ -314,10 +311,14 @@ let getScheduleDoctorByDateService = (doctorId, date) => {
                     message: 'Missing input parameter!'
                 })
             } else {
+
                 let data = await db.Schedule.findAll({
                     where: {
                         doctorId: doctorId,
-                        date: date
+                        date: {
+                            [Op.between]: [date, timeFuture],
+                        },
+
                     },
                     include: [
                         { model: db.Allcode, as: 'timeTypeData', attributes: ['valueEn', 'valueVi'] }
@@ -325,6 +326,7 @@ let getScheduleDoctorByDateService = (doctorId, date) => {
                     ],
 
                 })
+
 
                 if (!data) {
                     data = [];
@@ -474,7 +476,7 @@ let getProfileDoctorByIdService = (id) => {
     })
 }
 
-let getListPatientForDoctorService = async (id, time) => {
+let getListPatientForDoctorService = async (id, time, futureTime) => {
     try {
         if (!id || !time) {
             return ({
@@ -482,8 +484,17 @@ let getListPatientForDoctorService = async (id, time) => {
                 message: 'Missing input parameter!'
             })
         } else {
+            console.log('time', time);
+            console.log('futureTime', futureTime);
+
             let data = await db.Booking.findAll({
-                where: { doctorId: id, date: time, statusId: status.CONFIRMED },
+                where: {
+                    doctorId: id,
+                    date: {
+                        [Op.between]: [time, futureTime],
+                    },
+                    statusId: status.CONFIRMED
+                },
                 attributes: {
                     exclude: ['token', 'createdAt', 'updatedAt']
                 },
@@ -514,8 +525,6 @@ let getListPatientForDoctorService = async (id, time) => {
 }
 
 let sendMailForPatientService = async (data) => {
-
-
     try {
         if (!data.emailPatient || !data.doctorId || !data.patientId) {
             return {
@@ -531,8 +540,6 @@ let sendMailForPatientService = async (data) => {
                     date: data.date,
                     timeType: data.timeType,
                 }
-
-
             })
             if (!response) {
                 return {
