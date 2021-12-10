@@ -8,10 +8,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { status } from '../utils/constant'
 
 
-let buildUrlEmail = (doctorId, patientId, timeType) => {
+let buildUrlEmail = (doctorId, patientId, timeType,date) => {
+
     let result = {}
     let token = uuidv4();
-    result.url = `${process.env.URL_REACT}/verify-booking?token=${token}&doctorId=${doctorId}&patientId=${patientId}&timeType=${timeType}`;
+    result.url = `${process.env.URL_REACT}/verify-booking?token=${token}&doctorId=${doctorId}&patientId=${patientId}&timeType=${timeType}&date=${date}`;
     result.token = token;
     return result;
 }
@@ -28,6 +29,26 @@ let postBookAppointmentService = (data) => {
                     message: "Missing input parameters",
                 })
             } else {
+                
+                let checkQuantilyPatient = await db.Schedule.findOne({ 
+                    where: {
+                        date: data.date, 
+                        doctorId: data.doctorId, 
+                        timeType: data.timeType
+                    },
+                    attributes: {
+                        include: ['currentNumber','maxNumber','date'],
+                    },
+                   
+                    raw: true,
+                    
+                })
+                if (checkQuantilyPatient.currentNumber === checkQuantilyPatient.maxNumber) {
+                    resolve({
+                        errCode: 4,
+                        message: 'This appointment is full',
+                    })
+                }
 
                 let dataAllCode = await db.Allcode.findOne({
                     where: { keyMap: data.timeType },
@@ -71,9 +92,9 @@ let postBookAppointmentService = (data) => {
                 });
 
                 let dataUrl;
-
+       
                 if (patient && patient[0]) {
-                    dataUrl = buildUrlEmail(data.doctorId, patient[0].id, data.timeType);
+                    dataUrl = buildUrlEmail(data.doctorId, patient[0].id, data.timeType,data.date);
 
                     let res = await db.Booking.findOrCreate({
                         where: { patientId: patient[0].id, timeType: data.timeType, date: data.date, doctorId: data.doctorId },
@@ -128,10 +149,6 @@ let postBookAppointmentService = (data) => {
                     }
 
 
-
-
-
-
                 } else {
                     resolve({
                         errCode: 3,
@@ -161,6 +178,7 @@ let postVerifyBookAppointmentService = async (data) => {
                 message: "Missing input parameters",
             }
         } else {
+
             let verifyPatient = await db.Booking.findOne({
                 where: {
                     token: data.token,
@@ -174,8 +192,20 @@ let postVerifyBookAppointmentService = async (data) => {
                 },
             })
 
+
             if (verifyPatient) {
                 verifyPatient.statusId = status.CONFIRMED;
+                let schedule = await db.Schedule.findOne({
+                    where:{
+                        date:data.date,
+                        doctorId:data.doctorId,
+                        timeType: data.timeType,
+                    },
+                })
+                
+                schedule.currentNumber = schedule.currentNumber+1;
+        
+                await schedule.save();
                 await verifyPatient.save();
 
                 return {

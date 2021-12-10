@@ -18,6 +18,7 @@ let postBookAppointment = async (req, res) => {
 
 let postVerifyBookAppointment = async (req, res) => {
     try {
+      
         let infor = await patientService.postVerifyBookAppointmentService(req.body);
         return res.status(200).json(infor)
 

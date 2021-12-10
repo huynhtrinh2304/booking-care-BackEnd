@@ -4,6 +4,7 @@ require('dotenv').config();
 import { status } from '../utils/constant';
 import emailService from './emailService';
 const MAX_NUMBER_SCHEDULES = process.env.MAX_NUMBER_SCHEDULES;
+
 const { Op } = require("sequelize");
 
 let getTopDoctorHome = (limitInput) => {
@@ -263,6 +264,8 @@ let bulkCreateScheduleService = (data) => {
                 if (schedule && schedule.length > 0) {
                     schedule.map(item => {
                         item.maxNumber = MAX_NUMBER_SCHEDULES;
+                        item.currentNumber = 0;
+
                     })
                 }
 
@@ -282,7 +285,6 @@ let bulkCreateScheduleService = (data) => {
                 let compare = _.differenceWith(schedule, resSchedule, (a, b) => {
                     return a.timeType === b.timeType && a.date === b.date
                 })
-
                 // Crete schedule for doctor
                 if (compare && compare.length > 0) {
                     await db.Schedule.bulkCreate(compare);
@@ -337,11 +339,6 @@ let getScheduleDoctorByDateService = (doctorId, date, timeFuture) => {
                     data: data
                 })
             }
-
-
-
-
-
 
         } catch (error) {
             reject(error);
@@ -484,8 +481,6 @@ let getListPatientForDoctorService = async (id, time, futureTime) => {
                 message: 'Missing input parameter!'
             })
         } else {
-            console.log('time', time);
-            console.log('futureTime', futureTime);
 
             let data = await db.Booking.findAll({
                 where: {
