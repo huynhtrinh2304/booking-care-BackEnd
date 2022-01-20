@@ -19,9 +19,6 @@ module.exports = (sequelize, DataTypes) => {
                 Allcode.hasOne(models.Booking, { foreignKey: 'timeType', as: 'time' })
 
 
-
-
-
         }
     };
     Allcode.init({
